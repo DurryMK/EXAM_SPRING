@@ -2,6 +2,7 @@ package com.des.client.serviceImpl.common;
 
 import com.des.client.conf.ResConst;
 import com.des.client.interfaceUtils.iBaidu.GenBaiduToken;
+import com.des.client.mapper.system.TokenMapper;
 import com.des.client.utils.commonUtils.RedisUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import java.util.concurrent.TimeUnit;
 public class CommonServiceImpl {
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private TokenMapper tokenMapper;
+
 
     /**
      * 读取aliyun密钥
@@ -75,6 +79,10 @@ public class CommonServiceImpl {
                 System.out.println("读取aes token从redis");
             }else{
                 System.out.println("读取aes token从数据库");
+                token = tokenMapper.queryToken("aes").getToken();
+                //存入redis
+                redisUtil.set(ResConst.aesKey,token);
+                redisUtil.expire(ResConst.aesKey,3,TimeUnit.DAYS);
             }
         } catch (Exception e) {
             e.printStackTrace();

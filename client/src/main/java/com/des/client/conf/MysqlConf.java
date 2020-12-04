@@ -20,8 +20,6 @@ public class MysqlConf {
         dataSource.setMinIdle(8);
         //最大连接数(默认值8,注意"maxIdle"这个属性已经弃用)
         dataSource.setMaxActive(32);
-        System.out.println("************************************************************************");
-        System.out.println(dataSource);
         return dataSource;
     }
 }

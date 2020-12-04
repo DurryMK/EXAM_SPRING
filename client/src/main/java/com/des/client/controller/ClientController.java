@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController()
+@RequestMapping("/app")
 public class ClientController {
 
     @Value("${server.port}")
@@ -45,6 +46,7 @@ public class ClientController {
             if(null == user){
                 resultMap.put(ResConst.RESTOKEN, ResConst.FAIL);
                 resultMap.put(ResConst.RESINFO, "未登录");
+                return resultMap;
             }
             resultMap.put(ResConst.RESTOKEN, ResConst.SUCCESS);
             resultMap.put(ResConst.RESINFO, "已登录");

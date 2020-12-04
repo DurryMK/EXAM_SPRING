@@ -2,9 +2,9 @@ package com.des.client.serviceImpl.system;
 
 import com.des.client.conf.ResConst;
 import com.des.client.entity.system.User;
-import com.des.client.mapper.Login.UserMapper;
+import com.des.client.mapper.system.UserMapper;
+import com.des.client.utils.commonUtils.AesCodeUtil;
 import com.des.client.utils.commonUtils.RedisUtil;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,8 @@ public class LoginServiceImpl {
     private UserMapper userMapper;
     @Autowired
     private RedisUtil redisUtil;
+    @Autowired
+    private AesCodeUtil aesCodeUtil;
 
     /**
      * 快速登录
@@ -62,22 +64,41 @@ public class LoginServiceImpl {
     /**
      * 自动登录
      */
-    public Map autoLogin(String mobile, Map map, HttpServletRequest request) {
-        //获取用户信息
-        User user = userMapper.queryUserByMobile(mobile);
-        //获取缓存的验证码
-        if (user == null) {
+    public Map autoLogin(String token, Map map, HttpServletRequest request) {
+        try {
+            //1.解析token
+            token = aesCodeUtil.AESDncode(token);
+            //2.分解token信息  用户名；密码；有效时间；登录方式
+            String[] infos = token.split(";");
+            String username = infos[0];
+            String pwd = infos[1];
+            String time = infos[2];
+            String type = infos[3];
+            long now = System.currentTimeMillis();//获取当前时间
+            User user = null;
+            if (now < Long.parseLong(time)) {//3.校验有效时间是否过期
+                //4.判断上次登录的方式
+                if ("Q".equals(type)) {
+                    user = userMapper.queryUserByMobile(username);
+                } else if ("L".equals(type)) {
+                    user = userMapper.queryUserByPwd(username, pwd);
+                } else {
+                    map.put(ResConst.RESTOKEN, ResConst.FAIL);
+                }
+            } else {
+                //已过期
+                map.put(ResConst.RESTOKEN, ResConst.FAIL);
+            }
+            if (user != null) {
+                request.getSession().setAttribute(ResConst.USERLOGINTOKEN, user);
+                map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
+            } else {
+                map.put(ResConst.RESTOKEN, ResConst.FAIL);
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
             map.put(ResConst.RESTOKEN, ResConst.FAIL);
-            map.put(ResConst.RESINFO, "用户信息验证失败！请重新登录");
-            return map;
         }
-        //登录成功之后删除验证码
-        redisUtil.delete(ResConst.VERIFYTOKEN + mobile);
-        //缓存用户登录记录
-        request.getSession().setAttribute(ResConst.USERLOGINTOKEN, mobile);
-        //返回用户信息
-        map.put(ResConst.RESINFO, userInfoConvers(user));
-        map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
         return map;
     }
 

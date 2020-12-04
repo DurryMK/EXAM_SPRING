@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Controller()
+@RequestMapping("/svode")
 public class SendVcodeController {
     @Autowired
     private RedisUtil redisUtil;

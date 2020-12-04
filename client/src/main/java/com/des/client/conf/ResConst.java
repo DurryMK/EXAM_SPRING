@@ -22,7 +22,7 @@ public class ResConst {
      */
     public final static String VERIFYTOKEN = "V_VCODE_";
     /**
-     * 登录记录缓存标识符
+     * 用户登录信息缓存标识符
      */
     public final static String USERLOGINTOKEN = "USER_LOGIN";
     /**
@@ -44,6 +44,6 @@ public class ResConst {
     /**
      * 默认的cookie键
      */
-    public final static String tokenKey = "EXMA_JWKLSQOPSUECOME";
+    public final static String cookieKey = "EXMA_USER";
 
 }

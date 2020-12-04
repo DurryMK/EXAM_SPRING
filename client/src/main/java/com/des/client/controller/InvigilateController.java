@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/interface")
 public class InvigilateController {
 
     @Autowired
