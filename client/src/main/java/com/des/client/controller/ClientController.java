@@ -42,7 +42,8 @@ public class ClientController {
     public Map initPage(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            User user = (User)request.getSession().getAttribute(ResConst.USERLOGINTOKEN);
+            Object user = request.getSession().getAttribute(ResConst.USERLOGINTOKEN);
+            System.out.println(user);
             if(null == user){
                 resultMap.put(ResConst.RESTOKEN, ResConst.FAIL);
                 resultMap.put(ResConst.RESINFO, "未登录");

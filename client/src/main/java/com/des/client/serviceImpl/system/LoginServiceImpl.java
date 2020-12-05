@@ -53,6 +53,7 @@ public class LoginServiceImpl {
                     redisUtil.delete(ResConst.VERIFYTOKEN + mobile);
                     //缓存用户登录记录
                     request.getSession().setAttribute(ResConst.USERLOGINTOKEN, user);
+                    System.out.println(request.getSession().getAttribute(ResConst.USERLOGINTOKEN));
                     //登录成功
                     map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
                     map.put(ResConst.RESINFO, "登录成功");

@@ -21,7 +21,7 @@ public class ResponseFilter implements Filter {
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
         // 响应头设置
         response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-        // 响应头设置
+        // 响应头设置  允许携带Cookie信息 解决Session不一致的问题
         response.setHeader("Access-Control-Allow-Credentials", "true");
 
         chain.doFilter(req, res);
