@@ -1,4 +1,4 @@
-package com.des.client.controller;
+package com.des.client.controller.Interface;
 
 import com.des.client.conf.ResConst;
 import com.des.client.interfaceUtils.iBaidu.FaceCompareUtil;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/interface")
-public class InvigilateController {
+public class InterfaceController {
 
     @Autowired
     private RedisUtil redisUtil;

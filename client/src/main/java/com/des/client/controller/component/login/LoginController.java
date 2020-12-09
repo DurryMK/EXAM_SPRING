@@ -1,4 +1,4 @@
-package com.des.client.controller;
+package com.des.client.controller.component.login;
 
 import com.des.client.conf.ResConst;
 import com.des.client.entity.system.User;

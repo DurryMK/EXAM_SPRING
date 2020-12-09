@@ -1,4 +1,4 @@
-package com.des.client.controller;
+package com.des.client.controller.system;
 
 import com.des.client.conf.ResConst;
 import com.des.client.entity.system.User;
@@ -42,8 +42,8 @@ public class ClientController {
     public Map initPage(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
+            System.out.println("initPage:"+request.getSession().getId());
             Object user = request.getSession().getAttribute(ResConst.USERLOGINTOKEN);
-            System.out.println(user);
             if(null == user){
                 resultMap.put(ResConst.RESTOKEN, ResConst.FAIL);
                 resultMap.put(ResConst.RESINFO, "未登录");

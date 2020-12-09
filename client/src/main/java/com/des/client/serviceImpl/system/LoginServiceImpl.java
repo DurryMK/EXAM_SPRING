@@ -51,9 +51,9 @@ public class LoginServiceImpl {
                 } else {
                     //登录成功之后删除验证码
                     redisUtil.delete(ResConst.VERIFYTOKEN + mobile);
+                    System.out.println("LoginServiceImpl:"+request.getSession().getId());
                     //缓存用户登录记录
                     request.getSession().setAttribute(ResConst.USERLOGINTOKEN, user);
-                    System.out.println(request.getSession().getAttribute(ResConst.USERLOGINTOKEN));
                     //登录成功
                     map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
                     map.put(ResConst.RESINFO, "登录成功");

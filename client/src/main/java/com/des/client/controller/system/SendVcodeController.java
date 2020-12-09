@@ -1,4 +1,4 @@
-package com.des.client.controller;
+package com.des.client.controller.system;
 
 import com.des.client.conf.ResConst;
 import com.des.client.entity.system.User;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,10 +33,6 @@ public class SendVcodeController {
     @RequestMapping("/sendLoginVcode")
     public @ResponseBody
     Map sendSMS(@RequestParam String mobile, HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        for(Cookie c : cookies){
-            System.out.println(c.getName()+":"+c.getValue());
-        }
         Map<String, Object> resultMap = new HashMap<>();
         try {
 //            mobile = AesCodeUtil.aesDecrypt(mobile);//对手机号进行解密
