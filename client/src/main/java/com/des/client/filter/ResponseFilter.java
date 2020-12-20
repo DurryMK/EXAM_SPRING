@@ -1,5 +1,6 @@
 package com.des.client.filter;
 
+import com.des.client.consts.Tag;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -11,7 +12,10 @@ public class ResponseFilter implements Filter {
     /**
      * 配置该过滤器
      * 服务器可以接收跨域请求
-     * 可以保存session状态
+     * 可以保存session状态 注：除谷歌以外
+     *
+     * 谷歌本地开发的 解决方案：chrome地址栏输入 chrome://flags/
+     * 找到”SameSite by default cookies“，修改为disable,即可关闭浏览器限制
      */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;

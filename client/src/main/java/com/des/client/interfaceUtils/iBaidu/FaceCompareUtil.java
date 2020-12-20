@@ -1,12 +1,10 @@
 package com.des.client.interfaceUtils.iBaidu;
 
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.BaiduInterfaceURL;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.GsonUtils;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.HttpUtil;
 import com.des.client.serviceImpl.common.CommonServiceImpl;
-import com.des.client.utils.commonUtils.Image2Base64;
-import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -95,7 +93,7 @@ public class FaceCompareUtil {
         String flag = apiMap.get("error_msg") + "";
         if (StringUtils.isEmpty(flag) || !flag.equals("SUCCESS")) {
             //返回结果失败
-            resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            resMap.put(Res.RESTOKEN, Res.FAIL);
             return resMap;
         }
         //获取照片对比结果
@@ -104,10 +102,10 @@ public class FaceCompareUtil {
         double score = Double.parseDouble(apiMap.get("score")+"");
         if(score>75){
             //以75作为阈值
-            resMap.put(ResConst.RESTOKEN, ResConst.SUCCESS);
+            resMap.put(Res.RESTOKEN, Res.SUCCESS);
         }else{
             //以75作为阈值
-            resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            resMap.put(Res.RESTOKEN, Res.FAIL);
         }
         return resMap;
     }

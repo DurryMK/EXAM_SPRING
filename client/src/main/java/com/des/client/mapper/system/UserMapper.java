@@ -10,21 +10,11 @@ import java.util.List;
 
 @Mapper
 public interface UserMapper {
-    @Select("select id,mobile,username,birthday,pwd,email,qq,school,major,imgUrl,isRname,status,regTime from e_user where 1 = 1")
-    public List<User> queryAllUser();
+    User queryUser(User user);
 
-    @Select("select id,mobile,username,birthday,pwd,email,qq,school,major,imgUrl,isRname,status,regTime from e_user where 1 = 1 and mobile=#{mobile}")
-    public User queryUserByMobile(String mobile);
+    User queryUserByMobile(String mobile);
 
-    @Select("select id,mobile,username,birthday,pwd,email,qq,school,major,imgUrl,isRname,status,regTime from e_user where 1 = 1 and username=#{username}")
-    public User queryUserByUsername(String username);
+    String queryIDByMobile(String mobile);
 
-    @Select("select id,mobile,username,birthday,pwd,email,qq,school,major,imgUrl,isRname,status,regTime from e_user where 1 = 1 and email=#{email}")
-    public User queryUserByEmail(String email);
-
-    @Select("select id,mobile,username,birthday,pwd,email,qq,school,major,imgUrl,isRname,status,regTime from e_user where 1 = 1 and username=#{username} and pwd=#{pwd}")
-    public User queryUserByPwd(String username, String pwd);
-
-    @Insert("insert into e_user values(#{id},#{username},#{mobile},#{imgUrl},#{birthday},#{pwd},#{email},#{school},#{qq},#{major},#{isRname},#{status},#{regTime})")
-    public void addUser(User user);
+    User queryUserByPwd(String username, String pwd);
 }

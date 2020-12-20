@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class User extends BaseEntity {
 
     private static final long serialVersionUID = 5054098176905250071L;
+    private String id;//ID
     private String mobile;//手机号
     private String username;//用户名
     private String birthday;//年龄
@@ -18,6 +19,14 @@ public class User extends BaseEntity {
     private String status;//账号状态
     private String RegTime;//注册时间
     private String major;//专业
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getMobile() {
         return mobile;
@@ -110,6 +119,7 @@ public class User extends BaseEntity {
     @Override
     public String toString() {
         return "User{" +
+                "id='" + id + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", username='" + username + '\'' +
                 ", birthday='" + birthday + '\'' +

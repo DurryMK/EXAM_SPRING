@@ -1,9 +1,8 @@
 package com.des.client.serviceImpl.question;
 
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
 import com.des.client.entity.ListInPage;
 import com.des.client.entity.question.QuestionComplete;
-import com.des.client.entity.question.QuestionPre;
 import com.des.client.entity.question.condition.QueListQueryCondition;
 import com.des.client.mapper.question.QuestionMapper;
 import com.des.client.mapper.question.QuestionPreMapper;
@@ -51,12 +50,12 @@ public class QuestionServiceImpl {
             listInPage.setCreateTimes(property.get("times"));
             listInPage.setTypes(property.get("types"));
             //返回
-            map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-            map.put(ResConst.RESINFO, listInPage);
+            map.put(Res.RESTOKEN, Res.SUCCESS);
+            map.put(Res.RESINFO, listInPage);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(ResConst.RESTOKEN, ResConst.FAIL);
-            map.put(ResConst.RESINFO, "获取数据失败");
+            map.put(Res.RESTOKEN, Res.FAIL);
+            map.put(Res.RESINFO, "获取数据失败");
         }
         return map;
     }

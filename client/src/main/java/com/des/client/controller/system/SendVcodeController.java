@@ -1,11 +1,11 @@
 package com.des.client.controller.system;
 
-import com.des.client.conf.ResConst;
-import com.des.client.entity.system.User;
+import com.des.client.consts.Res;
+import com.des.client.consts.Tag;
+import com.des.client.entity.system.Emap;
 import com.des.client.serviceImpl.common.CommonServiceImpl;
 import com.des.client.serviceImpl.system.LoginServiceImpl;
 import com.des.client.utils.SMSUtils.SMSUtils;
-import com.des.client.utils.commonUtils.AesCodeUtil;
 import com.des.client.utils.commonUtils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,29 +32,26 @@ public class SendVcodeController {
 
     @RequestMapping("/sendLoginVcode")
     public @ResponseBody
-    Map sendSMS(@RequestParam String mobile, HttpServletRequest request) {
-        Map<String, Object> resultMap = new HashMap<>();
+    Map sendSMS(@RequestParam String mobile, Emap em, HttpServletRequest request) {
         try {
-//            mobile = AesCodeUtil.aesDecrypt(mobile);//对手机号进行解密
             //获取发送的密钥
             Map keyMap = commonService.getALiyunKey();
             String code = SMSUtils.SendVerifyCode(mobile, keyMap);
             System.out.println(mobile + "发送的验证码：" + code);
             if (code == null) {
                 //发送失败
-                resultMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+                return em.fail();
             } else {
                 //验证码存入缓存
-                redisUtil.set(ResConst.VERIFYTOKEN + mobile, code);
+                redisUtil.set(Tag.VERIFY_TOKEN + mobile, code);
                 //设置过期时间 5分钟
-                redisUtil.expire(ResConst.VERIFYTOKEN + mobile, VCODE_TIME, TimeUnit.SECONDS);
+                redisUtil.expire(Tag.VERIFY_TOKEN + mobile, VCODE_TIME, TimeUnit.SECONDS);
                 //发送成功
-                resultMap.put(ResConst.RESTOKEN, ResConst.SUCCESS);
+                return em.success();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            resultMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            return em.fail();
         }
-        return resultMap;
     }
 }

@@ -1,6 +1,8 @@
 package com.des.client.serviceImpl.system;
 
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
+import com.des.client.consts.Tag;
+import com.des.client.entity.system.Emap;
 import com.des.client.entity.system.User;
 import com.des.client.mapper.system.UserMapper;
 import com.des.client.utils.commonUtils.AesCodeUtil;
@@ -25,38 +27,31 @@ public class LoginServiceImpl {
     /**
      * 快速登录
      */
-    public void quickLogin(String mobile, String vcode, Map map, HttpServletRequest request) {
-        if (!redisUtil.hasKey(ResConst.VERIFYTOKEN + mobile)) {//1.验证码是否过期
-            map.put(ResConst.RESTOKEN, ResConst.FAIL);
-            map.put(ResConst.RESINFO, "验证码已失效，请重新获取");
+    public void quickLogin(String mobile, String vcode, Emap em) {
+        //1.验证码是否过期
+        if (!redisUtil.hasKey(Tag.VERIFY_TOKEN + mobile)) {
+            em.fail("验证码已失效，请重新获取");
         } else {
-            //获取缓存的验证码
-            String orgVocde = redisUtil.get(ResConst.VERIFYTOKEN + mobile);
-            if (!orgVocde.equals(vcode)) {//2.验证码是否正确
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                map.put(ResConst.RESINFO, "验证码错误");
+            //2.获取缓存的验证码
+            String orgVocde = redisUtil.get(Tag.VERIFY_TOKEN + mobile);
+            //3.验证码是否正确
+            if (!orgVocde.equals(vcode)) {
+                em.fail("验证码错误");
             } else {
                 //获取用户信息
-                User user = null;
+                User user = new User() ;
                 try {
-                    user = userMapper.queryUserByMobile(mobile);
+                    user.setMobile(mobile);
+                    user = userMapper.queryUser(user);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                    map.put(ResConst.RESINFO, "登录失败，系统异常");
+                    em.fail("登录失败，系统异常");
                 }
                 if (user == null) {//3.用户是否存在
-                    map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                    map.put(ResConst.RESINFO, "用户不存在");
+                    em.fail("用户不存在");
                 } else {
-                    //登录成功之后删除验证码
-                    redisUtil.delete(ResConst.VERIFYTOKEN + mobile);
-                    System.out.println("LoginServiceImpl:"+request.getSession().getId());
-                    //缓存用户登录记录
-                    request.getSession().setAttribute(ResConst.USERLOGINTOKEN, user);
                     //登录成功
-                    map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-                    map.put(ResConst.RESINFO, "登录成功");
+                    em.success(user);
                 }
             }
         }
@@ -65,53 +60,19 @@ public class LoginServiceImpl {
     /**
      * 自动登录
      */
-    public Map autoLogin(String token, Map map, HttpServletRequest request) {
+    public Map autoLogin(String token, Emap em) {
         try {
-            //1.解析token
-            token = aesCodeUtil.AESDncode(token);
-            //2.分解token信息  用户名；密码；有效时间；登录方式
-            String[] infos = token.split(";");
-            String username = infos[0];
-            String pwd = infos[1];
-            String time = infos[2];
-            String type = infos[3];
-            long now = System.currentTimeMillis();//获取当前时间
-            User user = null;
-            if (now < Long.parseLong(time)) {//3.校验有效时间是否过期
-                //4.判断上次登录的方式
-                if ("Q".equals(type)) {
-                    user = userMapper.queryUserByMobile(username);
-                } else if ("L".equals(type)) {
-                    user = userMapper.queryUserByPwd(username, pwd);
-                } else {
-                    map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                }
-            } else {
-                //已过期
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
+            //1.从redis读取登录token
+            if (!redisUtil.hasKey(token)) {
+                return em.fail("登录已过期");
             }
-            if (user != null) {
-                request.getSession().setAttribute(ResConst.USERLOGINTOKEN, user);
-                map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-            } else {
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
-            }
-        } catch (NumberFormatException e) {
+            //2.读取登录信息
+            String mobile = redisUtil.get(token);
+            //3.登录成功
+            return em.success(mobile);
+        } catch (Exception e) {
             e.printStackTrace();
-            map.put(ResConst.RESTOKEN, ResConst.FAIL);
+            return em.fail("系统异常");
         }
-        return map;
-    }
-
-    /**
-     * 处理用户信息
-     */
-    private Map userInfoConvers(User user) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("name", user.getUsername());
-        map.put("mobile", user.getMobile().replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
-        map.put("qq", user.getQq());
-        map.put("email", user.getEmail());
-        return map;
     }
 }

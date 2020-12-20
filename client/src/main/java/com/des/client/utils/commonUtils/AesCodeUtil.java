@@ -1,6 +1,5 @@
 package com.des.client.utils.commonUtils;
 
-import com.des.client.conf.ResConst;
 import com.des.client.serviceImpl.common.CommonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

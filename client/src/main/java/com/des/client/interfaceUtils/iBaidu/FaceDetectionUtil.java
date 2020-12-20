@@ -2,7 +2,8 @@ package com.des.client.interfaceUtils.iBaidu;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
+import com.des.client.consts.Tag;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.BaiduInterfaceURL;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.GsonUtils;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.HttpUtil;
@@ -37,12 +38,12 @@ public class FaceDetectionUtil {
 
             // 获取接口token
             Map tokenMap = commonService.genBaiduToken();
-            if (!tokenMap.get(ResConst.RESTOKEN).equals(ResConst.SUCCESS)) {
-                resMap.put(ResConst.RESINFO, "图像采集失败");
-                resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            if (!tokenMap.get(Res.RESTOKEN).equals(Res.SUCCESS)) {
+                resMap.put(Res.RESINFO, "图像采集失败");
+                resMap.put(Res.RESTOKEN, Res.FAIL);
                 return resMap;
             }
-            String accessToken = tokenMap.get(ResConst.BAIDUTOKEN) + "";
+            String accessToken = tokenMap.get(Tag.BAIDU_TOKEN) + "";
             //调用接口获取返回值
             String result = HttpUtil.post(url, accessToken, "application/json", param);
             //解析结果返回
@@ -62,7 +63,7 @@ public class FaceDetectionUtil {
         String error_msg = jsonObject.getString("error_msg");
         if (StringUtils.isEmpty(error_msg) || !error_msg.equals("SUCCESS")) {
             //返回结果失败
-            resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            resMap.put(Res.RESTOKEN, Res.FAIL);
             return resMap;
         }
         //检测结果
@@ -70,12 +71,12 @@ public class FaceDetectionUtil {
         //人脸数量
         double face_num = Double.parseDouble(resultJson.getString("face_num"));
         if (face_num == 0) {
-            resMap.put(ResConst.RESINFO, "未检测到人脸");
-            resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            resMap.put(Res.RESINFO, "未检测到人脸");
+            resMap.put(Res.RESTOKEN, Res.FAIL);
             return resMap;
         } else if (face_num > 1) {
-            resMap.put(ResConst.RESINFO, "人数过多");
-            resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+            resMap.put(Res.RESINFO, "人数过多");
+            resMap.put(Res.RESTOKEN, Res.FAIL);
             return resMap;
         } else {
             /**
@@ -102,27 +103,27 @@ public class FaceDetectionUtil {
             JSONObject occlusion = quality.getJSONObject("occlusion");
 
             if (illumination < 30) {
-                resMap.put(ResConst.RESINFO, "光线过暗");
-                resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+                resMap.put(Res.RESINFO, "光线过暗");
+                resMap.put(Res.RESTOKEN, Res.FAIL);
                 return resMap;
             } else if (completeness != 1) {
-                resMap.put(ResConst.RESINFO, "请保持面部在采集框范围内");
-                resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+                resMap.put(Res.RESINFO, "请保持面部在采集框范围内");
+                resMap.put(Res.RESTOKEN, Res.FAIL);
                 return resMap;
             } else if (blur < 0.6) {
-                resMap.put(ResConst.RESINFO, "请保持图像稳定");
-                resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+                resMap.put(Res.RESINFO, "请保持图像稳定");
+                resMap.put(Res.RESTOKEN, Res.FAIL);
                 return resMap;
             } else if (occlusion.getDouble("right_eye") > 0.6 || occlusion.getDouble("left_eye") > 0.6 ||
                     occlusion.getDouble("nose") > 0.7 || occlusion.getDouble("mouth") > 0.7 ||
                     occlusion.getDouble("left_cheek") > 0.8 || occlusion.getDouble("right_cheek") > 0.8 ||
                     occlusion.getDouble("chin_contour") > 0.6) {
-                resMap.put(ResConst.RESINFO, "请保持面部清晰无遮挡");
-                resMap.put(ResConst.RESTOKEN, ResConst.FAIL);
+                resMap.put(Res.RESINFO, "请保持面部清晰无遮挡");
+                resMap.put(Res.RESTOKEN, Res.FAIL);
                 return resMap;
             }
-            resMap.put(ResConst.RESINFO, "采集成功");
-            resMap.put(ResConst.RESTOKEN, ResConst.SUCCESS);
+            resMap.put(Res.RESINFO, "采集成功");
+            resMap.put(Res.RESTOKEN, Res.SUCCESS);
         }
         return resMap;
     }

@@ -1,15 +1,13 @@
 package com.des.client.controller.component.question;
 
-import com.ctc.wstx.util.StringUtil;
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
+import com.des.client.controller.system.AbstractController;
 import com.des.client.entity.ListInPage;
 import com.des.client.entity.question.condition.QueListQueryCondition;
 import com.des.client.serviceImpl.question.QuestionServiceImpl;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/que")
-public class QuestionController {
+public class QuestionController extends AbstractController {
 
     @Autowired
     private QuestionServiceImpl questionService;
@@ -48,8 +46,8 @@ public class QuestionController {
             map = questionService.queryQuestionListInfoByPage(condition, listInPage);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-            map.put(ResConst.RESINFO, "获取数据异常");
+            map.put(Res.RESTOKEN, Res.SUCCESS);
+            map.put(Res.RESINFO, "获取数据异常");
         }
         return map;
     }
@@ -70,8 +68,8 @@ public class QuestionController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-            map.put(ResConst.RESINFO, "获取数据异常");
+            map.put(Res.RESTOKEN, Res.SUCCESS);
+            map.put(Res.RESINFO, "获取数据异常");
         }
         return map;
     }

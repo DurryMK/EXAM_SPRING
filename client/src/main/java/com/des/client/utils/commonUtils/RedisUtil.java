@@ -32,6 +32,13 @@ public class RedisUtil {
     public StringRedisTemplate getRedisTemplate() {
         return this.redisTemplate;
     }
+    /**
+     *自定义方法 保存kv并设置过期时间
+     * */
+    public void set(String k,String v,long time,TimeUnit unit){
+        set(k,v);
+        expire(k,time,unit);
+    }
 
     /** -------------------key相关操作--------------------- */
 

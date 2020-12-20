@@ -1,86 +1,65 @@
 package com.des.client.controller.component.home;
 
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Tag;
+import com.des.client.consts.Res;
+import com.des.client.controller.system.AbstractController;
+import com.des.client.entity.system.Emap;
 import com.des.client.entity.system.User;
 import com.des.client.mapper.system.UserMapper;
-import com.des.client.serviceImpl.common.CommonServiceImpl;
+import com.des.client.service.system.CommonService;
 import com.des.client.serviceImpl.system.LoginServiceImpl;
-import com.des.client.utils.commonUtils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController()
 @RequestMapping("/home")
-public class HomeController {
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
-    private CommonServiceImpl commonService;
+public class HomeController extends AbstractController {
+
     @Autowired
     private LoginServiceImpl loginService;
-    @Autowired
-    private UserMapper um;
 
     @RequestMapping("/initPage")
-    public Map initPage(HttpServletRequest request, Map map) {
-        map = new HashMap<>();
+    public Map initPage(HttpServletRequest request, Emap em) {
+        User user = null;
         try {
-            User user = (User)request.getSession().getAttribute(ResConst.USERLOGINTOKEN);
+            user = (User)request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
             if (null == user) {
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                map.put(ResConst.RESINFO, "未登录");
-                return map;
+                return em.fail("未登录");
             }
             //获取最新的用户信息
-            user = um.queryUserByMobile(user.getMobile());
+            user = commonService.getUserInfoWithHandle(user);
             if(user == null){
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                map.put(ResConst.RESINFO, "未登录");
-                return map;
+                return em.fail("用户信息错误");
             }
-            user.setMobile(user.getMobile().replace("(\\\\d{3})\\\\d{4}(\\\\d{4})", "$1****$2"));
-            map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-            map.put(ResConst.RESINFO, "已登录");
-            map.put("user",user);
+            return em.successJ(user);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(ResConst.RESTOKEN, ResConst.FAIL);
-            map.put(ResConst.RESINFO, "系统异常");
+            return em.fail("系统异常");
         }
-        return map;
     }
 
     @RequestMapping("/personal/initPage")
-    public Map personal(HttpServletRequest request, Map map) {
-        map = new HashMap<>();
+    public Map personal(HttpServletRequest request, Emap em) {
         try {
-            User user = (User)request.getSession().getAttribute(ResConst.USERLOGINTOKEN);
+            User user = (User)request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
             if (null == user) {
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                map.put(ResConst.RESINFO, "未登录");
-                return map;
+                return em.fail("未登录");
             }
             //获取最新的用户信息
-            user = um.queryUserByMobile(user.getMobile());
+            user = commonService.getUserInfoWithHandle(user);
             if(user == null){
-                map.put(ResConst.RESTOKEN, ResConst.FAIL);
-                map.put(ResConst.RESINFO, "未登录");
-                return map;
+                return em.fail("未找到用户");
             }
-            user.setMobile(user.getMobile().replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
-            map.put(ResConst.RESTOKEN, ResConst.SUCCESS);
-            map.put(ResConst.RESINFO,user);
+            return em.success(user);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(ResConst.RESTOKEN, ResConst.FAIL);
-            map.put(ResConst.RESINFO, "系统异常");
+            return em.fail("系统异常");
         }
-        return map;
     }
 }

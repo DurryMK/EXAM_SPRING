@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Select;
 @Mapper
 public interface TokenMapper {
     @Select("select * from e_token where name=#{name}")
-    public EToken queryToken(String name);
+    EToken queryToken(String name);
 }

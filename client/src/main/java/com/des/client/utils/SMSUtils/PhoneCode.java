@@ -10,7 +10,8 @@ import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
+import com.des.client.consts.Tag;
 
 import java.util.Map;
 
@@ -48,8 +49,8 @@ public class PhoneCode {
         final String product = StaticPeram.product;// 短信API产品名称（短信产品名固定，无需修改）
         final String domain = StaticPeram.domain;// 短信API产品域名（接口地址固定，无需修改）
         // 替换成你的AK
-        final String accessKeyId = keyMap.get(ResConst.ALIYUNACKEYTOKEN)+"";// 你的accessKeyId,参考本文档步骤2
-        final String accessKeySecret = keyMap.get(ResConst.ALIYUNACKEYSECRTTOKEN)+"";// 你的accessKeySecret，参考本文档步骤2
+        final String accessKeyId = keyMap.get(Tag.ALIYUN_ACCESSKEY_TOKEN)+"";// 你的accessKeyId,参考本文档步骤2
+        final String accessKeySecret = keyMap.get(Tag.ALIYUN_SECRET_TOKEN)+"";// 你的accessKeySecret，参考本文档步骤2
         // 初始化ascClient,暂时不支持多region
         IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou",
                 accessKeyId, accessKeySecret);

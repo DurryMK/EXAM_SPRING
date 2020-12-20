@@ -1,6 +1,7 @@
-package com.des.client.controller.Interface;
+package com.des.client.controller.interfaceService;
 
-import com.des.client.conf.ResConst;
+import com.des.client.consts.Res;
+import com.des.client.controller.system.AbstractController;
 import com.des.client.interfaceUtils.iBaidu.FaceCompareUtil;
 import com.des.client.interfaceUtils.iBaidu.FaceDetectionUtil;
 import com.des.client.serviceImpl.common.CommonServiceImpl;
@@ -16,12 +17,8 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/interface")
-public class InterfaceController {
+public class InterfaceController extends AbstractController {
 
-    @Autowired
-    private RedisUtil redisUtil;
-    @Autowired
-    private CommonServiceImpl commonService;
     @Autowired
     private FaceDetectionUtil faceDetectionUtil;//百度人脸检测工具
     @Autowired
@@ -43,7 +40,7 @@ public class InterfaceController {
         String examineeId = request.getParameter("examineeId");
         String runningId = request.getParameter("runningId");
         resMap = faceDetectionUtil.faceDetect(imgStr);
-        if (resMap.get(ResConst.RESTOKEN).equals(ResConst.SUCCESS)) {
+        if (resMap.get(Res.RESTOKEN).equals(Res.SUCCESS)) {
             //采集成功 缓存图片信息到redis 以固定token+试卷编号+考生编号+每场考试的随机id作为key
             redisUtil.set(DetectionToken + paperId + examineeId + runningId, imgStr);
             System.out.println("人脸检测token" + DetectionToken + paperId + examineeId + runningId);
