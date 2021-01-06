@@ -2,7 +2,7 @@ package com.des.client.controller.component.question;
 
 import com.des.client.consts.Res;
 import com.des.client.controller.system.AbstractController;
-import com.des.client.entity.ListInPage;
+import com.des.client.entity.PageContainer;
 import com.des.client.entity.question.condition.QueListQueryCondition;
 import com.des.client.serviceImpl.question.QuestionServiceImpl;
 import org.apache.commons.lang.StringUtils;
@@ -27,23 +27,23 @@ public class QuestionController extends AbstractController {
      * 初始化系统题目列表页面
      */
     @RequestMapping("/initPage")
-    public Map initPage(HttpServletRequest request, ListInPage listInPage, Map map, QueListQueryCondition condition, HttpServletResponse response) {
+    public Map initPage(HttpServletRequest request, PageContainer pageContainer, Map map, QueListQueryCondition condition, HttpServletResponse response) {
         map = new HashMap<String, Object>();
         //1.session中是否有查询记录
         Object listInSession = request.getSession().getAttribute("listInPage");
         if (listInSession != null) {
             //2.有查询记录，则使用该查询条件继续查询
-            listInPage = (ListInPage) listInSession;
+            pageContainer = (PageContainer) listInSession;
         } else {
             //3.没有 则赋初值
-            listInPage.setCurrentPage(1);
-            listInPage.setPageSize(10);
-            listInPage.setTotal(0);
+            pageContainer.setCurrentPage(1);
+            pageContainer.setPageSize(10);
+            pageContainer.setTotal(0);
         }
         try {
             condition.setOwner("0");// 0 查询系统题库
             //4.查询单页数据
-            map = questionService.queryQuestionListInfoByPage(condition, listInPage);
+            map = questionService.queryQuestionListInfoByPage(condition, pageContainer);
         } catch (Exception e) {
             e.printStackTrace();
             map.put(Res.RESTOKEN, Res.SUCCESS);
@@ -53,7 +53,7 @@ public class QuestionController extends AbstractController {
     }
 
     @RequestMapping("/genQuestionList")
-    public Map quickLogin(HttpServletRequest request, ListInPage listInPage, Map map, HttpServletResponse response) {
+    public Map quickLogin(HttpServletRequest request, PageContainer pageContainer, Map map, HttpServletResponse response) {
         map = new HashMap<String, Object>();
         try {
             //1.获取查询参数
@@ -61,11 +61,9 @@ public class QuestionController extends AbstractController {
             //2.解码
             param = URLDecoder.decode(param, "UTF-8");
             //3.解析 pageSizes[0]=5&pageSizes[1]=10&pageSizes[2]=15&pageSizes[3]=20&pageSizes[4]=25&pageSize=10&total=0&currentPage=1&searchKey=
-            listInPage = parse(param, listInPage);
+            pageContainer = parse(param, pageContainer);
             //4.查询单页数据
-            map = questionService.queryQuestionListInfoByPage(new QueListQueryCondition(), listInPage);
-
-
+            map = questionService.queryQuestionListInfoByPage(new QueListQueryCondition(), pageContainer);
         } catch (Exception e) {
             e.printStackTrace();
             map.put(Res.RESTOKEN, Res.SUCCESS);
@@ -74,7 +72,7 @@ public class QuestionController extends AbstractController {
         return map;
     }
 
-    private ListInPage parse(String param, ListInPage listInPage) {
+    private PageContainer parse(String param, PageContainer pageContainer) {
         String[] params = param.split("&");
         for (String s : params) {
             String name = null;
@@ -87,16 +85,16 @@ public class QuestionController extends AbstractController {
             }
             if ("pageSize".equals(name) && value != "" && StringUtils.isNotEmpty(value)) {
                 //当前分页数
-                listInPage.setPageSize(Integer.parseInt(value));
+                pageContainer.setPageSize(Integer.parseInt(value));
             }
             if ("currentPage".equals(name) && value != "" && StringUtils.isNotEmpty(value)) {
                 //当前分页数
-                listInPage.setCurrentPage(Integer.parseInt(value));
+                pageContainer.setCurrentPage(Integer.parseInt(value));
             }
             if ("searchKey".equals(name) && value != "" && StringUtils.isNotEmpty(value)) {
                 //当前分页数
             }
         }
-        return listInPage;
+        return pageContainer;
     }
 }

@@ -5,13 +5,13 @@ import com.des.client.entity.base.BaseEntity;
 import java.util.Arrays;
 import java.util.List;
 
-public class ListInPage extends BaseEntity {
+public class PageContainer extends BaseEntity {
 
     private static final long serialVersionUID = 4097888609707868099L;
 
     /**
-     *表格信息的容器
-     * */
+     * 页面列表信息的容器
+     */
     private Integer currentPage;//当前页码
     private Object infos;//数据
     private Integer pageSize;//当前的分页数
@@ -84,7 +84,6 @@ public class ListInPage extends BaseEntity {
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
     }
-
 
 
     @Override

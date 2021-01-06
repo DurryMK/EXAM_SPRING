@@ -45,7 +45,7 @@ public class CommonServiceImpl implements CommonService {
             return null;
         }
         //隐藏ID
-        user.setId(random.nextInt(10000) + "");
+        user.setId(random.nextInt(100000) + "");
         //隐藏手机号中间4位
         user.setMobile(user.getMobile().replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
         //计算当前年龄
@@ -101,21 +101,28 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 读取aes Token
      */
-    public String genAesToken() {
-        String token = "";
+    public Map genAesToken() {
+        Map map = new HashMap<String, String>();
+        String key = "";
+        String vi = "";
         try {
-            if (redisUtil.hasKey(Tag.AES_KEY)) {
+            if (redisUtil.hasKey(Tag.AES_KEY + "key") && redisUtil.hasKey(Tag.AES_KEY + "vi")) {
                 //从redis读取token
-                token = redisUtil.get(Tag.AES_KEY);
+                key = redisUtil.get(Tag.AES_KEY + "key");
+                vi = redisUtil.get(Tag.AES_KEY + "vi");
             } else {
-                token = tokenMapper.queryToken("aes").getToken();
+                key = tokenMapper.queryToken("Authorization_key").getToken();
+                vi = tokenMapper.queryToken("Authorization_vi").getToken();
                 //存入redis
-                redisUtil.set(Tag.AES_KEY, token);
-                redisUtil.expire(Tag.AES_KEY, 3, TimeUnit.DAYS);
+                redisUtil.set(Tag.AES_KEY + "key", key, 3, TimeUnit.DAYS);
+                redisUtil.set(Tag.AES_KEY + "vi", vi, 3, TimeUnit.DAYS);
             }
+            map.put("key", key);
+            map.put("vi", vi);
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
+            return map;
         }
-        return token;
     }
 }

@@ -13,7 +13,7 @@ public class ResponseFilter implements Filter {
      * 配置该过滤器
      * 服务器可以接收跨域请求
      * 可以保存session状态 注：除谷歌以外
-     *
+     * <p>
      * 谷歌本地开发的 解决方案：chrome地址栏输入 chrome://flags/
      * 找到”SameSite by default cookies“，修改为disable,即可关闭浏览器限制
      */
@@ -24,7 +24,7 @@ public class ResponseFilter implements Filter {
         // 响应类型/**/
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE,HEAD,CONNECT,TRACE,PUT");
         // 响应头设置
-        response.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        response.setHeader("Access-Control-Allow-Headers", "x-requested-with,Authorization,Type");
         // 响应头设置  允许携带Cookie信息 解决Session不一致的问题
         response.setHeader("Access-Control-Allow-Credentials", "true");
         chain.doFilter(req, res);

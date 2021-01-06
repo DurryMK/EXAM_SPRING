@@ -6,7 +6,7 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://39.105.42.45:8761/eureka/
 spring:
   application:
     name: client
@@ -29,3 +29,4 @@ mybatis:
 logging:
   level:
     com.des.client.mapper: debug
+    org.aspectj: info

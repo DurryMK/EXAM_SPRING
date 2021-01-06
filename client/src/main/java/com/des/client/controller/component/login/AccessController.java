@@ -10,6 +10,7 @@ import com.des.client.mapper.system.UserMapper;
 import com.des.client.serviceImpl.system.LoginServiceImpl;
 import com.des.client.utils.commonUtils.AesCodeUtil;
 import com.des.client.utils.commonUtils.GenCookieToken;
+import com.des.client.utils.commonUtils.RSAUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -48,8 +49,6 @@ public class AccessController extends AbstractController {
             if (Res.SUCCESS.equals(em.token())) {
                 //登录成功 保存登录信息
                 request.getSession().setAttribute(Tag.USER_LOGIN_TOKEN, em.info());
-                //返回到客户端的信息
-                User user = commonService.getUserInfoWithHandle((User) em.info());
                 // 生成登录记录 保存到Redis 缓存3天
                 String token = UUID.randomUUID().toString();
                 redisUtil.set(token, mobile, 3, TimeUnit.DAYS);
@@ -58,12 +57,21 @@ public class AccessController extends AbstractController {
                 cookie.setMaxAge(expireTime);
                 cookie.setPath("/exam_du");
                 response.addCookie(cookie);
-                return em.success(user);
+                //生成密钥对
+                Map map = RSAUtil.genKeyPair();
+                //保存私钥到session
+                request.getSession().setAttribute(Tag.PRIVATEKEY,map.get(RSAUtil.PRIVATE));
+                //保存公钥到session
+                request.getSession().setAttribute(Tag.PUBLICKEY,map.get(RSAUtil.PUBLIC));
+                //公钥返回到客户端
+                return em.success(map.get(RSAUtil.PUBLIC));
+            }else{
+                return em.back();
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return em.fail("系统异常");
         }
-        return em.fail();
     }
 
     /**
@@ -83,10 +91,10 @@ public class AccessController extends AbstractController {
                     }
                 }
             } else {
-                return em.fail();
+                return em.fail("无登录记录");
             }
             if (StringUtils.isEmpty(token)) {
-                return em.fail();
+                return em.fail("登录凭证为空");
             }
             //自动登录
             loginService.autoLogin(token, em);
@@ -95,24 +103,28 @@ public class AccessController extends AbstractController {
             }
             //登录成功
             String mobile = (String) em.info();
-            //获取用户信息
+            //获取用户信息 保存到Session
             user.setMobile(mobile);
             user = commonService.getUserInfo(user);
             request.getSession().setAttribute(Tag.USER_LOGIN_TOKEN, user);
+            //生成密钥对
+            Map map = RSAUtil.genKeyPair();
+            //保存私钥到session
+            request.getSession().setAttribute(Tag.PRIVATEKEY,map.get(RSAUtil.PRIVATE));
+            //保存公钥到session
+            request.getSession().setAttribute(Tag.PUBLICKEY,map.get(RSAUtil.PUBLIC));
+            return em.success(map.get(RSAUtil.PUBLIC));
         } catch (Exception e) {
             e.printStackTrace();
-            return em.fail();
+            return em.fail("系统异常");
         }
-        return em.success();
     }
 
-    @RequestMapping("/test")
+    @RequestMapping("/exitLogin")
     public @ResponseBody
-    void test(HttpServletRequest request) {
-        String mobile = request.getParameter("mobile");
+    void exitLogin(HttpServletRequest request) {
         try {
-            User user = um.queryUserByMobile(mobile);
-            System.out.println(user);
+            request.getSession().removeAttribute(Tag.USER_LOGIN_TOKEN);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -3,8 +3,10 @@ package com.des.client.entity.system;
 import com.alibaba.fastjson.JSON;
 import com.des.client.consts.Res;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author durry
@@ -13,7 +15,8 @@ import java.util.Map;
  * 请求响应结果的实体类
  */
 public class Emap {
-    private Map map = null;
+
+    private Map map = new HashMap();
 
     /**
      * 仅返回失败状态
@@ -34,7 +37,7 @@ public class Emap {
     }
 
     /**
-     * 返回成功状态 并传参
+     * 返回成功状态 并传单个参数
      */
     public Map success(Object obj) {
         this.map = new HashMap<String, Object>();
@@ -42,14 +45,29 @@ public class Emap {
         this.map.put(Res.RESINFO, obj);
         return this.map;
     }
+    /**
+     * 返回成功状态 并传多个参数
+     */
+    public Map success(String[] keys, Object... objs) {
+        this.map = new HashMap<String, Object>();
+        this.map.put(Res.RESTOKEN, Res.SUCCESS);
+        int index = 0;
+        Map map1 = new HashMap<String, Object>();
+        for (String key : keys) {
+            map1.put(key, objs[index]);
+            index++;
+        }
+        this.map.put(Res.RESINFO, map1);
+        return this.map;
+    }
 
     /**
-     * 返回失败状态 并传参
+     * 返回失败状态 并传递失败信息
      */
-    public Map fail(Object obj) {
+    public Map fail(String msg) {
         this.map = new HashMap<String, Object>();
         this.map.put(Res.RESTOKEN, Res.FAIL);
-        this.map.put(Res.RESINFO, obj);
+        this.map.put(Res.RESINFO, msg);
         return this.map;
     }
 
@@ -60,6 +78,24 @@ public class Emap {
         this.map = new HashMap<String, Object>();
         this.map.put(Res.RESTOKEN, Res.SUCCESS);
         this.map.put(Res.RESINFO, JSON.toJSON(obj));
+
+        return this.map;
+    }
+
+    /**
+     * 返回成功状态 传参 并转JSON格式
+     */
+    public Map successJ(String[] keys, Object... objs) {
+        this.map = new HashMap<String, Object>();
+        this.map.put(Res.RESTOKEN, Res.SUCCESS);
+        int index = 0;
+        Map map1 = new HashMap<String, Object>();
+        for (String key : keys) {
+            map1.put(key, objs[index]);
+            index++;
+        }
+        this.map.put(Res.RESINFO, map1);
+
         return this.map;
     }
 

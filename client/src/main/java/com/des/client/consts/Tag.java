@@ -37,5 +37,14 @@ public class Tag {
     /**
      * 试卷Code缓存标识符
      */
-    public final static String PAPER_CODE  = "PAPER_CODE_";
+    public final static String PAPER_CODE = "PAPER_CODE_";
+    /**
+     * API签名的缓存标识符
+     */
+    public final static String AUTHOR_TOKEN = "AUTHOR_";
+    /**
+     * 保存在session的密钥对
+     */
+    public static final String PRIVATEKEY = "USER_PRIVATEKEY_";
+    public static final String PUBLICKEY = "USER_PUBLICKEY_";
 }

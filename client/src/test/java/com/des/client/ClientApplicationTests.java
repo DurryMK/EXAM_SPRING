@@ -1,20 +1,14 @@
 package com.des.client;
 
-import com.des.client.entity.paper.Invigilates;
-import com.des.client.entity.question.QuestionComplete;
-import com.des.client.entity.question.QuestionPre;
-import com.des.client.entity.question.condition.QueListQueryCondition;
-import com.des.client.entity.system.User;
-import com.des.client.mapper.make.PaperMapper;
-import com.des.client.mapper.question.QuestionPreMapper;
-import com.des.client.mapper.system.UserMapper;
-import com.des.client.utils.commonUtils.GenID;
+import com.des.client.entity.paper.Paper;
+import com.des.client.entity.paper.condition.PaperCondition;
+import com.des.client.mapper.paper.PaperInfoMapper;
+import com.des.client.mapper.paper.PaperMapper;
+import com.des.client.utils.commonUtils.RedisUtil;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.awt.print.Paper;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -22,11 +16,26 @@ import java.util.List;
 class ClientApplicationTests {
     @Resource
     private PaperMapper pm;
+    @Resource
+    private PaperInfoMapper pim;
+    @Resource
+    private RedisUtil rd;
+
+    @Resource
+    private PaperInfoMapper paperInfoMapper;
     @Test
     void contextLoads() throws UnsupportedEncodingException {
-//        List<QuestionPre> questionListByPaper = pm.getQuestionListByPaper("11001");
-//        System.out.println(questionListByPaper);
-        System.out.println(pm.getPaperListByUser("1001"));;
+//        List<String> list = new ArrayList<String>();
+//        list.add("asda");
+//        rd.lRightPushAll("asdas",list);
+        PaperCondition condition = new PaperCondition();
+        condition.setOwner("1001");
+        condition.setKey("1");
+        condition.setStart(0);
+        condition.setPageSize(10);
+        List<Paper> paperList = paperInfoMapper.getPaperList(condition, Paper.NO_DEL);
+        System.out.println(paperList);
+
     }
 
 }

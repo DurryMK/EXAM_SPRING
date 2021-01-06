@@ -1,7 +1,7 @@
 package com.des.client.serviceImpl.question;
 
 import com.des.client.consts.Res;
-import com.des.client.entity.ListInPage;
+import com.des.client.entity.PageContainer;
 import com.des.client.entity.question.QuestionComplete;
 import com.des.client.entity.question.condition.QueListQueryCondition;
 import com.des.client.mapper.question.QuestionMapper;
@@ -22,21 +22,21 @@ public class QuestionServiceImpl {
     /**
      * 查询题目列表
      */
-    public Map queryQuestionListInfoByPage(QueListQueryCondition condition, ListInPage listInPage) {
+    public Map queryQuestionListInfoByPage(QueListQueryCondition condition, PageContainer pageContainer) {
         Map map = new HashMap<String, Object>();
         try {
             //1.设置查找的范围
-            int start = listInPage.getCurrentPage() * listInPage.getPageSize();
-            condition.setLimit(start, listInPage.getPageSize());
+            int start = pageContainer.getCurrentPage() * pageContainer.getPageSize();
+            condition.setLimit(start, pageContainer.getPageSize());
             //2.设置查找的条件
             //2.1 关键字
-            condition.setKey(listInPage.getSearchKey());
+            condition.setKey(pageContainer.getSearchKey());
             //2.2 类型
-            condition.setTypes((String[])listInPage.getTypes());
+            condition.setTypes((String[]) pageContainer.getTypes());
             //2.3 创建时间
-            condition.setTimes((String[])listInPage.getCreateTimes());
+            condition.setTimes((String[]) pageContainer.getCreateTimes());
             //2.4 难度
-            condition.setLevels((String[])listInPage.getLevels());
+            condition.setLevels((String[]) pageContainer.getLevels());
             //3.调用接口查询当页数据
             List<QuestionComplete> questionCompletes = preMapper.queryListByPage(condition);
             //4.查询该类型数据的总条数
@@ -44,14 +44,14 @@ public class QuestionServiceImpl {
             //5.查询 当前页 该类型数据所包含的所有类型、难度等级、创建时间
             Map<String, Object> property = queryPropertyByList(questionCompletes);
             //6.以上所有数据集成到ListInPage中
-            listInPage.setTotal(total);
-            listInPage.setInfos(questionCompletes);
-            listInPage.setLevels(property.get("levels"));
-            listInPage.setCreateTimes(property.get("times"));
-            listInPage.setTypes(property.get("types"));
+            pageContainer.setTotal(total);
+            pageContainer.setInfos(questionCompletes);
+            pageContainer.setLevels(property.get("levels"));
+            pageContainer.setCreateTimes(property.get("times"));
+            pageContainer.setTypes(property.get("types"));
             //返回
             map.put(Res.RESTOKEN, Res.SUCCESS);
-            map.put(Res.RESINFO, listInPage);
+            map.put(Res.RESINFO, pageContainer);
         } catch (Exception e) {
             e.printStackTrace();
             map.put(Res.RESTOKEN, Res.FAIL);

@@ -1,10 +1,8 @@
 package com.des.client.serviceImpl.make;
 
-import com.des.client.entity.paper.Paper;
 import com.des.client.entity.paper.PaperType;
-import com.des.client.mapper.make.PaperInfoMapper;
+import com.des.client.mapper.paper.PaperInfoMapper;
 import com.des.client.service.componet.make.MakeInfoService;
-import com.des.client.service.componet.make.MakeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

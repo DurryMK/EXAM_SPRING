@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.des.client.mapper.paper.PaperMapper">
+    <select id="hasPaper" parameterType="java.lang.String"
+            resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM
+        E_PAPER p
+        WHERE
+        p.title = #{title}
+        AND
+        p.owner = #{owner}
+    </select>
+    <insert id="savePaper" parameterType="com.des.client.entity.paper.Paper">
+        INSERT INTO E_PAPER
+        VALUES(
+        #{id},
+        #{title},
+        #{type},
+        #{remark},
+        #{code},
+        #{owner},
+        #{imgUrl},
+        #{status},
+        #{personal},
+        #{level},
+        #{del},
+        #{time})
+    </insert>
+    <insert id="saveInvigilate" parameterType="com.des.client.entity.paper.Invigilate">
+        INSERT INTO E_Invigilate
+        VALUES(
+        #{id},
+        #{paperId},
+        #{join},
+        #{page},
+        #{isCopy},
+        #{isPaste},
+        #{isRname},
+        #{leave},
+        #{isCamera},
+        #{isDoRname},
+        #{duration},
+        #{delivery},
+        #{start},
+        #{end},
+        #{isOpenForever},
+        #{passMark},
+        #{noMark},
+        #{isShowResult},
+        #{submit})
+    </insert>
+    <update parameterType="com.des.client.entity.paper.Paper" id="updatePaper">
+UPDATE E_PAPER p
+set
+title=#{title},type=#{type},remark=#{remark},
+imgUrl=#{imgUrl},status=#{status},personal=#{personal},level=#{level}
+where code=#{code} and owner=#{owner}
+    </update>
+    <update parameterType="com.des.client.entity.paper.Invigilate" id="updateInvigilate">
+        UPDATE E_Invigilate p
+        <trim prefix="set" suffixOverrides=",">
+            <if test="Invigilate.join!=null">`join`=#{Invigilate.join},</if>
+            <if test="Invigilate.page!=null">page=#{Invigilate.page},</if>
+            <if test="Invigilate.isCopy!=null">isCopy=#{Invigilate.isCopy},</if>
+            <if test="Invigilate.isPaste!=null">isPaste=#{Invigilate.isPaste},</if>
+            <if test="Invigilate.isRname!=null">isRname=#{Invigilate.isRname},</if>
+            <if test="Invigilate.leave!=null">`leave`=#{Invigilate.leave},</if>
+            <if test="Invigilate.isCamera!=null">isCamera=#{Invigilate.isCamera},</if>
+            <if test="Invigilate.isDoRname!=null">isDoRname=#{Invigilate.isDoRname},</if>
+            <if test="Invigilate.duration!=null">duration=#{Invigilate.duration},</if>
+            <if test="Invigilate.delivery!=null">delivery=#{Invigilate.delivery},</if>
+            <if test="Invigilate.start!=null">start=#{Invigilate.start},</if>
+            <if test="Invigilate.end!=null">`end`=#{Invigilate.end},</if>
+            <if test="Invigilate.isOpenForever!=null">isOpenForever=#{Invigilate.isOpenForever},</if>
+            <if test="Invigilate.passMark!=null">passMark=#{Invigilate.passMark},</if>
+            <if test="Invigilate.noMark!=null">noMark=#{Invigilate.noMark},</if>
+            <if test="Invigilate.isShowResult!=null">isShowResult=#{Invigilate.isShowResult},</if>
+            <if test="Invigilate.submit!=null">submit=#{Invigilate.submit}</if>
+        </trim>
+        where
+        paper_id = (
+        select a.id from e_paper a where a.`code` = #{code}
+        )
+        and
+        paper_id in (
+        select b.id from e_paper b where b.`owner` = #{owner}
+        )
+    </update>
+</mapper>

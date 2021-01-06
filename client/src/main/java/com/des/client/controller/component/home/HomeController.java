@@ -3,6 +3,7 @@ package com.des.client.controller.component.home;
 import com.des.client.consts.Tag;
 import com.des.client.consts.Res;
 import com.des.client.controller.system.AbstractController;
+import com.des.client.core.annotation.Access;
 import com.des.client.entity.system.Emap;
 import com.des.client.entity.system.User;
 import com.des.client.mapper.system.UserMapper;
@@ -29,9 +30,6 @@ public class HomeController extends AbstractController {
         User user = null;
         try {
             user = (User)request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
-            if (null == user) {
-                return em.fail("未登录");
-            }
             //获取最新的用户信息
             user = commonService.getUserInfoWithHandle(user);
             if(user == null){

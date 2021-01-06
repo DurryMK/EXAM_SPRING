@@ -15,22 +15,28 @@ public class Paper extends BaseEntity {
 
     private static final long serialVersionUID = -102700627461469183L;
 
+    public static final String EXPORT = "1";
+    public static final String NO_EXPORT = "0";
+    public static final String DEL = "1";
+    public static final String NO_DEL = "0";
+    public static final String PERSONAL = "1";
+    public static final String NO_PERSONAL = "0";
+
     private String id;
     private String title;
     private String remark;
     private String type;
-    private String start;
-    private String end;
     private String code;
     private String owner;
     private String imgUrl;
-    private LinkedList<Question> questionList;
-    private Invigilates invigilates;
     private String status;
     private String personal;
     private String level;
-    private String del;
     private String time;
+    private String del;
+    private String start;
+    private String end;
+    private String runningStatus;
 
     public String getDel() {
         return del;
@@ -88,22 +94,6 @@ public class Paper extends BaseEntity {
         this.type = type;
     }
 
-    public String getStart() {
-        return start;
-    }
-
-    public void setStart(String start) {
-        this.start = start;
-    }
-
-    public String getEnd() {
-        return end;
-    }
-
-    public void setEnd(String end) {
-        this.end = end;
-    }
-
     public String getCode() {
         return code;
     }
@@ -128,22 +118,6 @@ public class Paper extends BaseEntity {
         this.imgUrl = imgUrl;
     }
 
-    public LinkedList<Question> getQuestionList() {
-        return questionList;
-    }
-
-    public void setQuestionList(LinkedList<Question> questionList) {
-        this.questionList = questionList;
-    }
-
-    public Invigilates getInvigilates() {
-        return invigilates;
-    }
-
-    public void setInvigilates(Invigilates invigilates) {
-        this.invigilates = invigilates;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -160,6 +134,30 @@ public class Paper extends BaseEntity {
         this.personal = personal;
     }
 
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public String getRunningStatus() {
+        return runningStatus;
+    }
+
+    public void setRunningStatus(String runningStatus) {
+        this.runningStatus = runningStatus;
+    }
+
     @Override
     public String toString() {
         return "Paper{" +
@@ -167,17 +165,12 @@ public class Paper extends BaseEntity {
                 ", title='" + title + '\'' +
                 ", remark='" + remark + '\'' +
                 ", type='" + type + '\'' +
-                ", start='" + start + '\'' +
-                ", end='" + end + '\'' +
                 ", code='" + code + '\'' +
                 ", owner='" + owner + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
-                ", questionList=" + questionList +
-                ", invigilates=" + invigilates +
                 ", status='" + status + '\'' +
                 ", personal='" + personal + '\'' +
                 ", level='" + level + '\'' +
-                ", del='" + del + '\'' +
                 ", time='" + time + '\'' +
                 '}';
     }

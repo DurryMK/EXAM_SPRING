@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.des.client.mapper.paper.PaperInfoMapper">
+    <select id="getPaperTypeByUser" parameterType="java.lang.String"
+            resultType="com.des.client.entity.paper.PaperType">
+        SELECT
+        p.*
+        FROM
+        E_PAPER_TYPE p
+        WHERE
+        p.user_id = #{owner}
+    </select>
+    <select id="getPaperByCode" parameterType="java.lang.String"
+            resultType="com.des.client.entity.paper.Paper">
+        SELECT
+        p.*
+        FROM
+        E_PAPER p
+        WHERE
+        p.code = #{code}
+    </select>
+    <select id="getPaperList" parameterType="com.des.client.entity.paper.condition.PaperCondition"
+            resultType="com.des.client.entity.paper.Paper">
+        SELECT a.* from(
+        SELECT ep.title, ep.remark, ep.code, ep.imgUrl, ep.status,ep.`time`
+        , ep.personal, ept.name AS `type`, ep.`level`,ei.`start` ,ei.`end`
+        FROM e_paper ep, e_paper_type ept,e_invigilate ei
+        WHERE ep.del = #{del}
+        AND ep.`type` = ept.id
+        AND ei.paper_id = ep.id
+        AND ept.user_id = #{condition.owner}
+        ) AS a
+        WHERE
+        1=1
+        <if test="condition.key != null and condition.key != ''">
+            and (
+            a.code LIKE concat('%',#{condition.key},'%')
+            or
+            a.title LIKE concat('%',#{condition.key},'%')
+            or
+            a.type LIKE concat('%',#{condition.key},'%')
+            )
+        </if>
+        limit #{condition.start},#{condition.pageSize}
+    </select>
+    <select id="getQuestionListByPaper" parameterType="java.lang.String"
+            resultType="com.des.client.entity.question.QuestionPre">
+        SELECT
+        p.*
+        FROM
+        E_QUESTION_PRE p
+        WHERE
+        p.id in (
+        select question_id from e_paper_question
+        where paper_id=#{paperId}
+        )
+    </select>
+    <select id="getPaperInvigilates" parameterType="java.lang.String"
+            resultType="com.des.client.entity.paper.Invigilate">
+        SELECT
+        *
+        FROM
+        E_INVIGILATE i
+        WHERE
+        i.id = #{invid}
+    </select>
+</mapper>

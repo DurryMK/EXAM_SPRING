@@ -31,4 +31,9 @@ public interface CommonService {
      * 获取百度token
      */
     Map genBaiduToken();
+
+    /**
+     *获取AES解密
+     * */
+    Map genAesToken();
 }
