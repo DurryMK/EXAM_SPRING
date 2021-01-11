@@ -21,4 +21,5 @@ public class Sys {
         SimpleDateFormat df = new SimpleDateFormat(DATE);
         return df.format(new Date());
     }
+
 }

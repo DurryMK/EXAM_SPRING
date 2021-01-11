@@ -19,6 +19,15 @@ public class Emap {
     private Map map = new HashMap();
 
     /**
+     * 仅返回错误状态
+     */
+    public Map exception() {
+        this.map = new HashMap<String, Object>();
+        map.put(Res.RESTOKEN, Res.EXCEPTION);
+        return this.map;
+    }
+
+    /**
      * 仅返回失败状态
      */
     public Map fail() {

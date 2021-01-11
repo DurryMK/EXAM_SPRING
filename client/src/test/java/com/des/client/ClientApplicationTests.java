@@ -35,7 +35,6 @@ class ClientApplicationTests {
         condition.setPageSize(10);
         List<Paper> paperList = paperInfoMapper.getPaperList(condition, Paper.NO_DEL);
         System.out.println(paperList);
-
     }
 
 }

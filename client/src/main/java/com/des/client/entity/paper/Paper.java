@@ -1,9 +1,6 @@
 package com.des.client.entity.paper;
 
 import com.des.client.entity.base.BaseEntity;
-import com.des.client.entity.question.Question;
-
-import java.util.LinkedList;
 
 /**
  * @author durry

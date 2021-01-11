@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.des.client.mapper.question.QuestionPreMapper">
-    <select id="queryListByPage" parameterType="com.des.client.entity.question.condition.QueListQueryCondition"
-            resultType="com.des.client.entity.question.QuestionComplete">
+<mapper namespace="com.des.client.mapper.question.QuestionInfoMapper">
+    <select id="queryListByPage" parameterType="com.des.client.entity.question.condition.QueCondition"
+            resultType="com.des.client.entity.question.QuestionPre">
         SELECT *
         FROM (
         SELECT *

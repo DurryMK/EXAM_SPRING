@@ -7,10 +7,10 @@ import com.des.client.service.componet.paper.PaperService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -25,36 +25,41 @@ public class PaperServiceImpl implements PaperService {
     private PaperInfoMapper infoMapper;
 
     @Override
-    public List<Paper> getPaperList(PaperCondition condition) {
-        try {
-            List<Paper> returnList = new ArrayList<>();
-            //处理查询条件
-            int startIndex = (condition.getCurrentPage() - 1) * condition.getPageSize();
-            condition.setStart(startIndex);
-            List<Paper> paperList = infoMapper.getPaperList(condition, Paper.NO_DEL);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date start = new Date();
-            Date end = new Date();
-            Date current = new Date();
-            //处理查询结果
-            for (Paper paper : paperList) {
-                start = dateFormat.parse(paper.getStart());
-                end = dateFormat.parse(paper.getEnd());
-                if (current.compareTo(start) < 0) {
-                    paper.setRunningStatus("-1");
+    public List<Paper> getPaperList(PaperCondition condition) throws ParseException {
+        List<Paper> returnList = new ArrayList<>();
+        //处理查询条件
+        int startIndex = (condition.getCurrentPage() - 1) * condition.getPageSize();
+        condition.setStart(startIndex);
+        List<Paper> paperList = infoMapper.getPaperList(condition, Paper.NO_DEL);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date start = new Date();
+        Date end = new Date();
+        Date current = new Date();
+        //处理查询结果
+        for (Paper paper : paperList) {
+            start = dateFormat.parse(paper.getStart());
+            end = dateFormat.parse(paper.getEnd());
+            if (current.compareTo(start) < 0) {
+                paper.setRunningStatus("-1");
+            } else {
+                if (current.compareTo(start) > 0 && current.compareTo(end) < 0) {
+                    paper.setRunningStatus("0");
                 } else {
-                    if (current.compareTo(start) > 0 && current.compareTo(end) < 0) {
-                        paper.setRunningStatus("0");
-                    } else {
-                        paper.setRunningStatus("1");
-                    }
+                    paper.setRunningStatus("1");
                 }
-                returnList.add(paper);
             }
-            return returnList;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            returnList.add(paper);
         }
+        return returnList;
+    }
+
+    @Override
+    public Integer getTotalWithCondition(PaperCondition paperCondition) {
+        PaperCondition condition = new PaperCondition();
+        condition.setStart(0);
+        condition.setPageSize(Integer.MAX_VALUE);
+        condition.setKey(paperCondition.getKey());
+        condition.setOwner(paperCondition.getOwner());
+        return infoMapper.getPaperList(paperCondition, Paper.NO_DEL).size();
     }
 }

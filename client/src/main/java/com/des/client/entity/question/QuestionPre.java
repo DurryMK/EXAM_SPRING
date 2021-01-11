@@ -3,25 +3,44 @@ package com.des.client.entity.question;
 import com.des.client.entity.base.BaseEntity;
 
 public class QuestionPre extends BaseEntity {
-    private static final long serialVersionUID = 1396499155984111467L;
+
+    private static final long serialVersionUID = 8676303584279244634L;
+
+    public static final String NO_DEL = "0";
+
+    public static final String DEL = "1";
+
     /**
-     * 题目预览实体类
+     * 题目信息实体类
      */
-    private String id;
     private String title;//题目标题
-    private String contentId;//内容Id
+    private String content;//内容
     private String origin;//原题链接
     private String type;//题目类型
     private String level;//难度
     private String site;//来源网站
     private String from;//题目出处
+    private String time;//创建时间
 
-    public String getId() {
-        return id;
+    public String getTime() {
+        return time;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return "QuestionComplete{" +
+                "title='" + title + '\'' +
+            ", origin='" + origin + '\'' +
+            ", type='" + type + '\'' +
+            ", level='" + level + '\'' +
+            ", site='" + site + '\'' +
+            ", from='" + from + '\'' +
+            ", time='" + time + '\'' +
+            '}';
+}
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getTitle() {
@@ -32,12 +51,12 @@ public class QuestionPre extends BaseEntity {
         this.title = title;
     }
 
-    public String getContentId() {
-        return contentId;
+    public String getContent() {
+        return content;
     }
 
-    public void setContentId(String contentId) {
-        this.contentId = contentId;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getOrigin() {
@@ -80,17 +99,4 @@ public class QuestionPre extends BaseEntity {
         this.from = from;
     }
 
-    @Override
-    public String toString() {
-        return "QuestionPre{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", contentId='" + contentId + '\'' +
-                ", origin='" + origin + '\'' +
-                ", type='" + type + '\'' +
-                ", level='" + level + '\'' +
-                ", site='" + site + '\'' +
-                ", from='" + from + '\'' +
-                '}';
-    }
 }

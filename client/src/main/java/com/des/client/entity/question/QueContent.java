@@ -2,7 +2,7 @@ package com.des.client.entity.question;
 
 import com.des.client.entity.base.BaseEntity;
 
-public class Question extends BaseEntity {
+public class QueContent extends BaseEntity {
 
     private static final long serialVersionUID = 262481688057589415L;
 

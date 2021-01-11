@@ -5,6 +5,7 @@ import com.des.client.entity.paper.condition.PaperCondition;
 import com.des.client.entity.system.PageCondition;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -14,5 +15,7 @@ import java.util.List;
  */
 @Service
 public interface PaperService {
-    List<Paper> getPaperList(PaperCondition paperCondition);
+    List<Paper> getPaperList(PaperCondition paperCondition) throws ParseException;
+
+    Integer getTotalWithCondition(PaperCondition paperCondition);
 }

@@ -1,4 +1,4 @@
-package com.des.client.serviceImpl.common;
+package com.des.client.serviceImpl.system;
 
 import com.des.client.consts.Res;
 import com.des.client.consts.Tag;
@@ -11,6 +11,8 @@ import com.des.client.utils.commonUtils.AgeUtil;
 import com.des.client.utils.commonUtils.RedisUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  * 用于公共服务
  */
 @Service
+@RefreshScope
 public class CommonServiceImpl implements CommonService {
     @Autowired
     private RedisUtil redisUtil;
@@ -32,6 +35,12 @@ public class CommonServiceImpl implements CommonService {
     private UserMapper userMapper;
 
     private Random random = new Random();
+
+    /**
+     * 图片服务器地址
+     */
+    @Value("${custom.imgUrl}")
+    private String imgUrl;
 
     @Override
     public User getUserInfo(User user) {
@@ -50,6 +59,7 @@ public class CommonServiceImpl implements CommonService {
         user.setMobile(user.getMobile().replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2"));
         //计算当前年龄
         user.setBirthday(AgeUtil.get(user.getBirthday()) + "");
+        user.setImgUrl(imgUrl + user.getImgUrl());
         return user;
     }
 
@@ -64,6 +74,7 @@ public class CommonServiceImpl implements CommonService {
             //读取数据库存入缓存 缓存30天
             key = tokenMapper.queryToken(Tag.ALIYUN_ACCESSKEY_TOKEN).getToken();
             secret = tokenMapper.queryToken(Tag.ALIYUN_SECRET_TOKEN).getToken();
+            log.debug("ALIYUN_ACCESSKEY_TOKEN:" + key + " , ALIYUN_SECRET_TOKEN:" + secret);
             redisUtil.set(Tag.ALIYUN_ACCESSKEY_TOKEN, key, 30, TimeUnit.DAYS);
             redisUtil.set(Tag.ALIYUN_SECRET_TOKEN, secret, 30, TimeUnit.DAYS);
         }

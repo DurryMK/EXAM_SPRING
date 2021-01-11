@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.des.client.mapper.question.QuestionInfoMapper">
+    <select id="queryPreList" parameterType="com.des.client.entity.question.condition.QueCondition"
+            resultType="com.des.client.entity.question.QuestionPre">
+        select * from (
+        select eqp.id ,eqp.title,eqp.contentid,eqp.origin ,eqp.site ,eqp.`from` ,eqp.`time` ,eqt.name as `type`,eqp.del
+        del,eq.content content,
+        CASE eqp.`level`
+        WHEN '1' THEN '简单'
+        WHEN '2' THEN '一般'
+        WHEN '3' THEN '中等'
+        WHEN '4' THEN '较难'
+        WHEN '5' THEN '极难'
+        ELSE '其它'
+        END as `level`
+        from
+        e_question_pre eqp ,e_question_type eqt,e_question eq
+        where
+        eqp.owner = #{condition.owner}
+        and
+        eqp.`type` = eqt.id
+        and eq.id = eqp.contentid
+        ) a
+        where 1 = 1
+        and a.del = #{del}
+        <if test="condition.key != null and condition.key != ''">
+            and ( a.title LIKE concat('%',#{condition.key},'%')
+            or a.`from` LIKE concat('%',#{condition.key},'%')
+            or a.`type` LIKE concat('%',#{condition.key},'%')
+            or a.`level` LIKE concat('%',#{condition.key},'%'))
+        </if>
+        <if test="condition.pageSize != null and condition.pageSize != ''">
+            limit #{condition.start},#{condition.pageSize}
+        </if>
+    </select>
+
+</mapper>

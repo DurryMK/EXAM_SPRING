@@ -33,6 +33,7 @@ public class Invigilate extends BaseEntity {
     private String noMark;//不及格的评语
     private String isShowResult;//是否在考试结束后立即显示成绩
     private String submit;//是否允许随时提交试卷
+    private String personal;//是否私密
 
     public Invigilate(String paperId) {
         this.id = UUID.randomUUID().toString().replaceAll("-", "");

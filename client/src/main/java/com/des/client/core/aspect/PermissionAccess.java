@@ -2,7 +2,6 @@ package com.des.client.core.aspect;
 
 import com.des.client.consts.Tag;
 import com.des.client.entity.system.Emap;
-import com.des.client.utils.commonUtils.AesCodeUtil;
 import com.des.client.utils.commonUtils.RSAUtil;
 import com.des.client.utils.commonUtils.RedisUtil;
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +38,8 @@ public class PermissionAccess {
 
     private final String SPLIT = ";";//签名分隔符
 
+    private Logger logger = LoggerFactory.getLogger(PermissionAccess.class);
+
     @Pointcut("execution(* com.des.client.controller.component..*.*(..))")
     private void PermissionAccess() {
     }
@@ -55,20 +56,26 @@ public class PermissionAccess {
                 if (o instanceof HttpServletRequest) {
                     //获取请求内容
                     request = (HttpServletRequest) o;
+                    break;
                 }
             }
             if (request != null) {
-                //获取请求的URL  对除登录请求以外进行登录验证
+                //获取请求的URL
                 String URL = request.getRequestURL().toString();
-
-                Object attribute = request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
-                if(URL.contains("/access")){
-                    if(attribute != null){
-                        return em.fail("已经登录");
+                String Origin = request.getHeader("Origin");
+                logger.debug("Request From [ "+Origin+" ]，Target : "+URL);
+                //获取用户信息
+                Object userInfo = request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
+                //对除登录请求以外进行登录验证
+                if (URL.contains("/access")) {
+                    if (!URL.contains("/exitLogin")) {
+                        if (userInfo != null) {
+                            return em.fail("已经登录");
+                        }
                     }
-                }else{
+                } else {
                     //非登录请求验证是否已经登录
-                    if (attribute != null) {
+                    if (userInfo != null) {
                         //已登录的请求 进行签名验证
                         if (!authorVerify(request))
                             return em.fail("无效的请求");
@@ -98,18 +105,20 @@ public class PermissionAccess {
                 return false;
             //获取签名
             String author = request.getHeader(AUTHOR);
-            //解密
+            //获取session中的私钥
             String privateKey = (String) request.getSession().getAttribute(Tag.PRIVATEKEY);
+            //对签名解密
             author = RSAUtil.decrypt(author, privateKey).replaceAll("\"", "");
             //签名不为空且必须含有分隔符
             if (StringUtils.isNotEmpty(author) && author.contains(SPLIT)) {
-                //请求发出时间;唯一标识符
+                //签名结构 请求发出时间;唯一标识符
                 String[] split = author.split(SPLIT);
                 String startTime = split[0];
                 String auId = split[1];
                 //当前时间与请求时间的时间差
                 long l = System.currentTimeMillis() - Long.parseLong(startTime);
                 if (l > OVERTIME) {
+                    //超时
                     return false;
                 }
                 //获取用户与签名集合的对应标识符
@@ -142,22 +151,6 @@ public class PermissionAccess {
             e.printStackTrace();
             return false;
         }
-        return false;
-    }
-
-    /**
-     * 登录校验
-     */
-    private boolean loginVerify(HttpServletRequest request) {
-        //获取请求的URL
-        String URL = request.getRequestURL().toString();
-        //登录请求 直接放行
-        if (URL.contains("/access"))
-            return true;
-        //非登录请求验证是否已经登录
-        Object attribute = request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
-        if (attribute != null)
-            return true;
         return false;
     }
 }

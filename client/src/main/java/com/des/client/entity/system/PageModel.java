@@ -12,8 +12,8 @@ import java.util.Map;
 public class PageModel extends BaseEntity {
     private static final long serialVersionUID = 185171668694754101L;
 
-    private Map data;
-    private PageCondition condition;
+    private Map data;//页面数据
+    private PageCondition condition;//页面信息
 
     public Map getData() {
         return data;

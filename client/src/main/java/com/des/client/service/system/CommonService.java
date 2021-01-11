@@ -1,6 +1,8 @@
 package com.des.client.service.system;
 
 import com.des.client.entity.system.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -13,6 +15,7 @@ import java.util.Map;
  */
 @Service
 public interface CommonService {
+    Logger log = LoggerFactory.getLogger(CommonService.class);
     /**
      * 获取用户信息
      */

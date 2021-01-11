@@ -1,100 +1,119 @@
 package com.des.client.controller.component.question;
 
 import com.des.client.consts.Res;
+import com.des.client.consts.Tag;
 import com.des.client.controller.system.AbstractController;
 import com.des.client.entity.PageContainer;
-import com.des.client.entity.question.condition.QueListQueryCondition;
-import com.des.client.serviceImpl.question.QuestionServiceImpl;
+import com.des.client.entity.paper.Paper;
+import com.des.client.entity.question.QuestionPre;
+import com.des.client.entity.question.condition.QueCondition;
+import com.des.client.entity.system.Emap;
+import com.des.client.entity.system.PageModel;
+import com.des.client.entity.system.User;
+import com.des.client.service.question.QuestionInfoService;
+import com.des.client.serviceImpl.question.QuestionInfoServiceImpl;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
+/**
+ * @author durry
+ * @version 1.0
+ * @date 2021/01/06 17:39
+ */
 @RestController
 @RequestMapping("/que")
+@RefreshScope
 public class QuestionController extends AbstractController {
 
-    @Autowired
-    private QuestionServiceImpl questionService;
-
+    @Resource
+    private QuestionInfoService questionService;
     /**
      * 初始化系统题目列表页面
      */
-    @RequestMapping("/initPage")
-    public Map initPage(HttpServletRequest request, PageContainer pageContainer, Map map, QueListQueryCondition condition, HttpServletResponse response) {
-        map = new HashMap<String, Object>();
-        //1.session中是否有查询记录
-        Object listInSession = request.getSession().getAttribute("listInPage");
-        if (listInSession != null) {
-            //2.有查询记录，则使用该查询条件继续查询
-            pageContainer = (PageContainer) listInSession;
-        } else {
-            //3.没有 则赋初值
-            pageContainer.setCurrentPage(1);
-            pageContainer.setPageSize(10);
-            pageContainer.setTotal(0);
-        }
+    @RequestMapping("/initPageSys")
+    public Map initPageSys(HttpServletRequest request,Emap em, QueCondition condition) {
         try {
-            condition.setOwner("0");// 0 查询系统题库
-            //4.查询单页数据
-            map = questionService.queryQuestionListInfoByPage(condition, pageContainer);
+            //查询系统题库
+            condition.setOwner(QueCondition.SYSTEM_OWNER);
+            //获取题目列表
+            List<QuestionPre> questionPreList = questionService.getQuestionList(condition);
+            //从列表中获取类型集合
+            Set typeSet = new HashSet<String>();
+            for (QuestionPre pre : questionPreList) {
+                typeSet.add(pre.getType());
+            }
+
+            //从列表中获取难度集合
+            Set levelSet = new HashSet<String>();
+            for (QuestionPre pre : questionPreList) {
+                levelSet.add(pre.getLevel());
+            }
+            int total = questionService.getTotalWithCondition(condition);
+            condition.setTotal(total);
+            //页面数据模型
+            PageModel model = new PageModel();
+            Map data = new HashMap<String, Object>();
+            data.put("list",questionPreList);
+            data.put("types",typeSet);
+            data.put("levels",levelSet);
+            model.setData(data);
+            model.setCondition(condition);
+            return em.success(model);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(Res.RESTOKEN, Res.SUCCESS);
-            map.put(Res.RESINFO, "获取数据异常");
+            return em.fail("系统异常，请稍后再试");
         }
-        return map;
     }
 
-    @RequestMapping("/genQuestionList")
-    public Map quickLogin(HttpServletRequest request, PageContainer pageContainer, Map map, HttpServletResponse response) {
-        map = new HashMap<String, Object>();
+    /**
+     * 初始化个人题目列表页面
+     */
+    @RequestMapping("/initPagePersonal")
+    public Map initPagePersonal(HttpServletRequest request,Emap em, QueCondition condition) {
         try {
-            //1.获取查询参数
-            String param = request.getParameter("param");
-            //2.解码
-            param = URLDecoder.decode(param, "UTF-8");
-            //3.解析 pageSizes[0]=5&pageSizes[1]=10&pageSizes[2]=15&pageSizes[3]=20&pageSizes[4]=25&pageSize=10&total=0&currentPage=1&searchKey=
-            pageContainer = parse(param, pageContainer);
-            //4.查询单页数据
-            map = questionService.queryQuestionListInfoByPage(new QueListQueryCondition(), pageContainer);
+            User user = (User) request.getSession().getAttribute(Tag.USER_LOGIN_TOKEN);
+            //查询个人题目列表
+            condition.setOwner(user.getId());
+            //获取该用户的题库总数
+            int totalWithUser = questionService.getTotalWithUser(condition);
+            //获取题目列表
+            List<QuestionPre> questionPreList = questionService.getQuestionList(condition);
+            //从列表中获取类型集合
+            Set typeSet = new HashSet<String>();
+            for (QuestionPre pre : questionPreList) {
+                typeSet.add(pre.getType());
+            }
+            //从列表中获取难度集合
+            Set levelSet = new HashSet<String>();
+            for (QuestionPre pre : questionPreList) {
+                levelSet.add(pre.getLevel());
+            }
+            //获取该类型的总数
+            int total = questionService.getTotalWithCondition(condition);
+            condition.setTotal(total);
+            //页面数据模型
+            PageModel model = new PageModel();
+            Map data = new HashMap<String, Object>();
+            data.put("list",questionPreList);
+            data.put("types",typeSet);
+            data.put("levels",levelSet);
+            data.put("totalWithUser",totalWithUser);
+            model.setData(data);
+            model.setCondition(condition);
+            return em.success(model);
         } catch (Exception e) {
             e.printStackTrace();
-            map.put(Res.RESTOKEN, Res.SUCCESS);
-            map.put(Res.RESINFO, "获取数据异常");
+            return em.fail("系统异常，请稍后再试");
         }
-        return map;
-    }
-
-    private PageContainer parse(String param, PageContainer pageContainer) {
-        String[] params = param.split("&");
-        for (String s : params) {
-            String name = null;
-            String value = null;
-            try {
-                name = s.split("=")[0];
-                value = s.split("=")[1];
-            } catch (Exception e) {
-                continue;
-            }
-            if ("pageSize".equals(name) && value != "" && StringUtils.isNotEmpty(value)) {
-                //当前分页数
-                pageContainer.setPageSize(Integer.parseInt(value));
-            }
-            if ("currentPage".equals(name) && value != "" && StringUtils.isNotEmpty(value)) {
-                //当前分页数
-                pageContainer.setCurrentPage(Integer.parseInt(value));
-            }
-            if ("searchKey".equals(name) && value != "" && StringUtils.isNotEmpty(value)) {
-                //当前分页数
-            }
-        }
-        return pageContainer;
     }
 }

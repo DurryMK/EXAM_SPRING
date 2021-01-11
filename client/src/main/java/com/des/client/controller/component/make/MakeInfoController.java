@@ -10,6 +10,7 @@ import com.des.client.service.componet.make.MakeInfoService;
 import com.des.client.service.componet.make.MakeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,7 @@ import java.util.Map;
  */
 @RestController()
 @RequestMapping("/make/info")
+@RefreshScope
 public class MakeInfoController extends AbstractController {
     @Autowired
     private MakeService makeService;

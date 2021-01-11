@@ -45,7 +45,7 @@
         limit #{condition.start},#{condition.pageSize}
     </select>
     <select id="getQuestionListByPaper" parameterType="java.lang.String"
-            resultType="com.des.client.entity.question.QuestionPre">
+            resultType="com.des.client.entity.question.QueContent">
         SELECT
         p.*
         FROM

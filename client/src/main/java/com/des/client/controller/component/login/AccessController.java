@@ -1,18 +1,17 @@
 package com.des.client.controller.component.login;
 
-import com.ctc.wstx.util.StringUtil;
 import com.des.client.consts.Res;
 import com.des.client.consts.Tag;
 import com.des.client.controller.system.AbstractController;
 import com.des.client.entity.system.Emap;
 import com.des.client.entity.system.User;
 import com.des.client.mapper.system.UserMapper;
-import com.des.client.serviceImpl.system.LoginServiceImpl;
+import com.des.client.serviceImpl.login.LoginServiceImpl;
 import com.des.client.utils.commonUtils.AesCodeUtil;
-import com.des.client.utils.commonUtils.GenCookieToken;
 import com.des.client.utils.commonUtils.RSAUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,13 +20,13 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Controller()
 @RequestMapping("/access")
+@RefreshScope
 public class AccessController extends AbstractController {
     @Autowired
     AesCodeUtil aesCodeUtil;
@@ -60,12 +59,12 @@ public class AccessController extends AbstractController {
                 //生成密钥对
                 Map map = RSAUtil.genKeyPair();
                 //保存私钥到session
-                request.getSession().setAttribute(Tag.PRIVATEKEY,map.get(RSAUtil.PRIVATE));
+                request.getSession().setAttribute(Tag.PRIVATEKEY, map.get(RSAUtil.PRIVATE));
                 //保存公钥到session
-                request.getSession().setAttribute(Tag.PUBLICKEY,map.get(RSAUtil.PUBLIC));
+                request.getSession().setAttribute(Tag.PUBLICKEY, map.get(RSAUtil.PUBLIC));
                 //公钥返回到客户端
                 return em.success(map.get(RSAUtil.PUBLIC));
-            }else{
+            } else {
                 return em.back();
             }
         } catch (Exception e) {
@@ -110,9 +109,9 @@ public class AccessController extends AbstractController {
             //生成密钥对
             Map map = RSAUtil.genKeyPair();
             //保存私钥到session
-            request.getSession().setAttribute(Tag.PRIVATEKEY,map.get(RSAUtil.PRIVATE));
+            request.getSession().setAttribute(Tag.PRIVATEKEY, map.get(RSAUtil.PRIVATE));
             //保存公钥到session
-            request.getSession().setAttribute(Tag.PUBLICKEY,map.get(RSAUtil.PUBLIC));
+            request.getSession().setAttribute(Tag.PUBLICKEY, map.get(RSAUtil.PUBLIC));
             return em.success(map.get(RSAUtil.PUBLIC));
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,11 +121,18 @@ public class AccessController extends AbstractController {
 
     @RequestMapping("/exitLogin")
     public @ResponseBody
-    void exitLogin(HttpServletRequest request) {
+    Map exitLogin(HttpServletRequest request,HttpServletResponse response, Emap em) {
         try {
             request.getSession().removeAttribute(Tag.USER_LOGIN_TOKEN);
+            //注销cookie
+            Cookie cookie = new Cookie(Tag.COOKIE_KEY, "");
+            cookie.setMaxAge(0);
+            cookie.setPath("/exam_du");
+            response.addCookie(cookie);
+            return em.success("已注销登录");
         } catch (Exception e) {
             e.printStackTrace();
+            return em.success("系统异常");
         }
     }
 }

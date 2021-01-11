@@ -1,6 +1,7 @@
 package com.des.client.filter;
 
-import com.des.client.consts.Tag;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -8,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@RefreshScope
 public class ResponseFilter implements Filter {
     /**
      * 配置该过滤器
@@ -17,10 +19,14 @@ public class ResponseFilter implements Filter {
      * 谷歌本地开发的 解决方案：chrome地址栏输入 chrome://flags/
      * 找到”SameSite by default cookies“，修改为disable,即可关闭浏览器限制
      */
+
+    @Value("${custom.env}")
+    private String env;
+
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
         // 指定允许其他域名访问
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:7777");
+        response.setHeader("Access-Control-Allow-Origin", env);
         // 响应类型/**/
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE,HEAD,CONNECT,TRACE,PUT");
         // 响应头设置

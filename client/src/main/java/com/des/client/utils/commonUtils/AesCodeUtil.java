@@ -1,6 +1,6 @@
 package com.des.client.utils.commonUtils;
 
-import com.des.client.serviceImpl.common.CommonServiceImpl;
+import com.des.client.serviceImpl.system.CommonServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Component

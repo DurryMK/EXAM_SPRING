@@ -7,7 +7,7 @@ import com.des.client.consts.Tag;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.BaiduInterfaceURL;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.GsonUtils;
 import com.des.client.interfaceUtils.iBaidu.baiduPackage.HttpUtil;
-import com.des.client.serviceImpl.common.CommonServiceImpl;
+import com.des.client.serviceImpl.system.CommonServiceImpl;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

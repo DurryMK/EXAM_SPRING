@@ -4,9 +4,8 @@ import com.des.client.consts.Res;
 import com.des.client.controller.system.AbstractController;
 import com.des.client.interfaceUtils.iBaidu.FaceCompareUtil;
 import com.des.client.interfaceUtils.iBaidu.FaceDetectionUtil;
-import com.des.client.serviceImpl.common.CommonServiceImpl;
-import com.des.client.utils.commonUtils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +16,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/interface")
+@RefreshScope
 public class InterfaceController extends AbstractController {
 
     @Autowired

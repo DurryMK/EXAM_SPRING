@@ -17,4 +17,8 @@ public class Res {
      * 失败
      */
     public final static String FAIL = "-1";
+    /**
+     * 异常
+     */
+    public final static String EXCEPTION = "-99";
 }
